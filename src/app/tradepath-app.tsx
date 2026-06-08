@@ -42,6 +42,13 @@ type Props = {
   initialTrades: Trade[];
   initialStates: StateOption[];
   categories: string[];
+  sourceAudit: {
+    checkedAt: string;
+    schedule: string;
+    status: string;
+    summary: string;
+    sources: { id: string; name: string; ok?: boolean; status?: number | null; url: string }[];
+  };
 };
 
 const formatMoney = (value: number) =>
@@ -309,7 +316,7 @@ function youtubeSearchUrl(query: string) {
   return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
 }
 
-export function TradePathApp({ initialTrades, initialStates, categories }: Props) {
+export function TradePathApp({ initialTrades, initialStates, categories, sourceAudit }: Props) {
   const [selectedTradeId, setSelectedTradeId] = useState(initialTrades[0].id);
   const [selectedState, setSelectedState] = useState("FL");
   const [selectedCity, setSelectedCity] = useState("Jacksonville");
@@ -490,6 +497,10 @@ export function TradePathApp({ initialTrades, initialStates, categories }: Props
               <span className="text-[#5e6b78]">AdSense</span>
               <strong>Ready slots</strong>
             </div>
+            <div className="flex justify-between gap-3">
+              <span className="text-[#5e6b78]">Weekly check</span>
+              <strong>{sourceAudit.status === "ok" ? "Clean" : "Review"}</strong>
+            </div>
           </div>
         </aside>
 
@@ -530,6 +541,33 @@ export function TradePathApp({ initialTrades, initialStates, categories }: Props
           </section>
 
           <AdSlot label="Top ad placement" />
+
+          <section className="grid gap-3 border border-[#d8e0e7] bg-white p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 className="text-lg font-bold">Weekly Source Check</h3>
+                <p className="mt-1 text-sm text-[#5e6b78]">
+                  Last checked {sourceAudit.checkedAt.slice(0, 10)}. Scheduled for Sundays so salary and occupation sources do not quietly go stale.
+                </p>
+              </div>
+              <span className={`rounded-full px-3 py-1 text-sm font-bold ${sourceAudit.status === "ok" ? "bg-[#f1fbf6] text-[#237455]" : "bg-[#fff5e8] text-[#a56613]"}`}>
+                {sourceAudit.status}
+              </span>
+            </div>
+            <p className="leading-7 text-[#314354]">{sourceAudit.summary}</p>
+            <div className="grid grid-cols-3 gap-2 max-[900px]:grid-cols-1">
+              {sourceAudit.sources.length ? (
+                sourceAudit.sources.map((source) => (
+                  <a className="border border-[#d8e0e7] bg-[#f7f9fb] p-3 text-sm" href={source.url} key={source.id} rel="noopener noreferrer" target="_blank">
+                    <strong className="block">{source.name}</strong>
+                    <span className="mt-1 block text-[#5e6b78]">Status: {source.ok ? "reachable" : "needs review"} {source.status ? `(${source.status})` : ""}</span>
+                  </a>
+                ))
+              ) : (
+                <span className="text-sm text-[#5e6b78]">First scheduled source run pending.</span>
+              )}
+            </div>
+          </section>
 
           <section className="grid grid-cols-2 gap-3 max-[900px]:grid-cols-1">
             <article className="border border-[#d8e0e7] bg-white p-4">

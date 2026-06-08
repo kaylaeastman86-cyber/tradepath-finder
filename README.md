@@ -37,6 +37,12 @@ NEXT_PUBLIC_ADSENSE_CLIENT=
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
 ```
 
+For the weekly GitHub Actions updater, add these as GitHub repository secrets only if you want Ollama to summarize the weekly audit:
+
+- `OLLAMA_BASE_URL`
+- `OLLAMA_API_KEY`
+- `OLLAMA_MODEL`
+
 ## CareerOneStop API Setup
 
 CareerOneStop requires a Web API registration. Their API docs say requests require a bearer token and user ID. The app is already wired for:
@@ -97,6 +103,27 @@ Before applying to AdSense:
 - Keep planning estimates visibly labeled until official wage records are returned.
 - For school and apprenticeship pages, ask for program cost, length, completion rate, placement rate, exam pass rate, and whether the program satisfies local licensing rules.
 - For business ownership guidance, verify contractor licensing, insurance, bonding, taxes, permits, and advertising rules by state and city.
+
+## Weekly Sunday Data Refresh
+
+The repo includes `.github/workflows/weekly-data-refresh.yml`. It runs every Sunday at 1:00 PM UTC, which is 9:00 AM Eastern during daylight time, and can also be started manually from GitHub Actions.
+
+The weekly job:
+
+- Checks BLS OEWS wage table release pages.
+- Checks BLS OEWS machine-readable time-series metadata.
+- Checks the O*NET database release page.
+- Writes the source audit to `src/data/weekly-source-check.json`.
+- Runs lint and build.
+- Commits the refreshed audit file back to `main` when it changes.
+
+That commit triggers a normal Vercel Git redeploy once the repo is connected to Vercel. This is the right pattern for now because Vercel serverless functions should not be treated like a writable long-term filesystem.
+
+Future updater work:
+
+- Parse BLS OEWS current data into state and metro wage snapshots by SOC code.
+- Import O*NET task and work-context files by O*NET-SOC code.
+- Add reviewed state licensing board source links before publishing state-specific license claims.
 
 ## Deployment
 
