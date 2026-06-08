@@ -319,9 +319,30 @@ function careerOneStopTrainingUrl(trade: Trade, region: StateOption, city: strin
   return `https://www.careeronestop.org/Credentials/Toolkit/find-local-training.aspx?keyword=${encodeURIComponent(trade.title)}&location=${encodeURIComponent(`${city}, ${region.code}`)}`;
 }
 
+const tradeImageUrls: Record<string, string> = {
+  electrician: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=1200&q=80",
+  plumber: "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?auto=format&fit=crop&w=1200&q=80",
+  "hvac-technician": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80",
+  welder: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=1200&q=80",
+  "automotive-technician": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
+  "aircraft-mechanic": "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=80",
+};
+
+const categoryImageUrls: Record<string, string> = {
+  "Agriculture & Natural Resources": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=1200&q=80",
+  "Construction & Building": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=80",
+  "Energy & Environment": "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1200&q=80",
+  "Healthcare & Public Safety": "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=1200&q=80",
+  "Manufacturing & Industrial": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=1200&q=80",
+  "Marine & Outdoor Trades": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1200&q=80",
+  "Mechanical & Utilities": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80",
+  "Personal Services": "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=80",
+  "Technology Infrastructure": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80",
+  "Transportation & Aviation": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
+};
+
 function jobImageUrl(trade: Trade) {
-  const query = encodeURIComponent(`${trade.title} trade worker`);
-  return `https://source.unsplash.com/900x620/?${query}`;
+  return tradeImageUrls[trade.id] || categoryImageUrls[trade.category] || categoryImageUrls["Construction & Building"];
 }
 
 function LicenseActionLinks({ trade, region, city }: { trade: Trade; region: StateOption; city: string }) {
