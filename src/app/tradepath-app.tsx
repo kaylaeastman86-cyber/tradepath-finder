@@ -32,6 +32,12 @@ type OfficialResult = {
   description: string;
 };
 
+type QuizQuestion = {
+  id: string;
+  question: string;
+  options: { label: string; score: number }[];
+};
+
 type Props = {
   initialTrades: Trade[];
   initialStates: StateOption[];
@@ -40,6 +46,181 @@ type Props = {
 
 const formatMoney = (value: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value);
+
+const categoryGuides: Record<
+  string,
+  {
+    quiz: QuizQuestion[];
+    reality: string[];
+    businessPath: string[];
+  }
+> = {
+  "Construction & Building": {
+    quiz: [
+      {
+        id: "outdoors",
+        question: "How do you feel about physical work, changing jobsites, weather, and early starts?",
+        options: [
+          { label: "That sounds workable for me", score: 2 },
+          { label: "I can handle some of it", score: 1 },
+          { label: "I need mostly indoor predictable work", score: 0 },
+        ],
+      },
+      {
+        id: "precision",
+        question: "Do you like measuring, layout, tools, plans, and seeing visible progress?",
+        options: [
+          { label: "Yes, that is the kind of work I want", score: 2 },
+          { label: "Maybe, if I can learn it step by step", score: 1 },
+          { label: "No, I would rather avoid tool-heavy work", score: 0 },
+        ],
+      },
+      {
+        id: "safety",
+        question: "Can you follow strict safety rules even when the crew is moving fast?",
+        options: [
+          { label: "Yes, safety rules help me focus", score: 2 },
+          { label: "I would need practice", score: 1 },
+          { label: "That would probably frustrate me", score: 0 },
+        ],
+      },
+    ],
+    reality: [
+      "Work can be seasonal, physically demanding, and deadline-driven.",
+      "Pay usually rises with documented hours, licenses, specialty skills, and reliability.",
+      "The people who move up fastest tend to learn safety, plans, communication, and estimating, not only tool use.",
+    ],
+    businessPath: [
+      "Start as a helper, apprentice, or entry-level crew member and document every hour and project type.",
+      "Move into lead hand, foreman, estimator, or licensed journeyman/master work once experience and exams allow.",
+      "Before starting a company, plan for contractor licensing, insurance, bonding, tools, a truck, permits, bookkeeping, taxes, and customer acquisition.",
+    ],
+  },
+  "Healthcare & Public Safety": {
+    quiz: [
+      {
+        id: "people",
+        question: "Are you comfortable helping people who may be stressed, sick, scared, or in pain?",
+        options: [
+          { label: "Yes, that is meaningful to me", score: 2 },
+          { label: "Some situations may take practice", score: 1 },
+          { label: "I would rather avoid that", score: 0 },
+        ],
+      },
+      {
+        id: "rules",
+        question: "Can you follow protocols, privacy rules, and documentation requirements carefully?",
+        options: [
+          { label: "Yes, structure helps me", score: 2 },
+          { label: "I can learn it", score: 1 },
+          { label: "I prefer less regulated work", score: 0 },
+        ],
+      },
+      {
+        id: "pace",
+        question: "How do you handle fast decisions and responsibility for other people's safety?",
+        options: [
+          { label: "I stay calm and focused", score: 2 },
+          { label: "I would need training and repetition", score: 1 },
+          { label: "That sounds too stressful", score: 0 },
+        ],
+      },
+    ],
+    reality: [
+      "Entry-level healthcare roles can be emotionally demanding and highly regulated.",
+      "Advancement usually depends on certification, scope of practice, clinical hours, and employer requirements.",
+      "Public safety roles may involve shift work, testing, background checks, physical standards, and stressful calls.",
+    ],
+    businessPath: [
+      "Build experience and credentials first; many independent healthcare services require strict licensing and compliance.",
+      "Possible business paths include training services, staffing support, mobile services where legal, consulting, or moving into administration.",
+      "Before business ownership, confirm state scope rules, insurance, HIPAA/privacy duties, medical director rules where applicable, and local permits.",
+    ],
+  },
+  "Manufacturing & Industrial": {
+    quiz: [
+      {
+        id: "machines",
+        question: "Do you like machines, measurement, troubleshooting, and repeatable processes?",
+        options: [
+          { label: "Yes, that fits me", score: 2 },
+          { label: "I am curious but new to it", score: 1 },
+          { label: "Not really", score: 0 },
+        ],
+      },
+      {
+        id: "detail",
+        question: "Can you stay focused on details, tolerances, quality checks, and safety locks?",
+        options: [
+          { label: "Yes, details are my lane", score: 2 },
+          { label: "With training, yes", score: 1 },
+          { label: "I prefer looser work", score: 0 },
+        ],
+      },
+      {
+        id: "shifts",
+        question: "Could you work shifts, overtime, or plant schedules if the pay and growth are right?",
+        options: [
+          { label: "Yes", score: 2 },
+          { label: "Sometimes", score: 1 },
+          { label: "No", score: 0 },
+        ],
+      },
+    ],
+    reality: [
+      "Industrial work rewards reliability, safety, diagnostics, and quality discipline.",
+      "Plants may run nights, weekends, overtime, or rotating shifts.",
+      "Cross-training in electrical, mechanical, PLCs, machining, welding, and quality can raise earning power.",
+    ],
+    businessPath: [
+      "Start by building a specialty: machining, welding, maintenance, automation, quality, or fabrication.",
+      "Move into lead technician, planner, supervisor, inspector, programmer, or independent repair/fabrication work.",
+      "Business ownership often requires equipment, shop space, insurance, supplier relationships, quoting skills, and quality documentation.",
+    ],
+  },
+};
+
+const defaultCategoryGuide = {
+  quiz: [
+    {
+      id: "hands-on",
+      question: "Do you want hands-on work where skill improves through practice?",
+      options: [
+        { label: "Yes, I learn best by doing", score: 2 },
+        { label: "Some hands-on work is good", score: 1 },
+        { label: "I prefer mostly desk-based work", score: 0 },
+      ],
+    },
+    {
+      id: "credential",
+      question: "Are you willing to complete a license, certificate, apprenticeship, or exam if it unlocks better pay?",
+      options: [
+        { label: "Yes", score: 2 },
+        { label: "Maybe if the path is clear", score: 1 },
+        { label: "No", score: 0 },
+      ],
+    },
+    {
+      id: "growth",
+      question: "Would you eventually want to lead crews, specialize, train others, or build a business?",
+      options: [
+        { label: "Yes, I want a growth path", score: 2 },
+        { label: "Maybe later", score: 1 },
+        { label: "I only want a steady job", score: 0 },
+      ],
+    },
+  ],
+  reality: [
+    "Every trade has tradeoffs: pay, physical demands, schedules, licensing, risk, and long-term body impact vary by field.",
+    "The safest decision is to verify wages, school claims, and licensing rules with official agencies before paying for training.",
+    "Talk to at least two workers in the field before committing; real day-to-day work often differs from online highlight videos.",
+  ],
+  businessPath: [
+    "Learn the trade first, then learn estimating, customer service, pricing, insurance, taxes, and operations.",
+    "Do not quit into a business too early; build savings, tools, references, licensing, and a simple bookkeeping process first.",
+    "A strong business path usually starts with reliable work, documented results, repeat customers, and clean compliance.",
+  ],
+};
 
 function estimateWage(trade: Trade, region: StateOption, city: string): Wage {
   const major = ["new york", "los angeles", "san jose", "seattle", "boston", "chicago", "denver", "miami", "san francisco"].some((item) =>
@@ -124,6 +305,10 @@ function AdSlot({ label }: { label: string }) {
   );
 }
 
+function youtubeSearchUrl(query: string) {
+  return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+}
+
 export function TradePathApp({ initialTrades, initialStates, categories }: Props) {
   const [selectedTradeId, setSelectedTradeId] = useState(initialTrades[0].id);
   const [selectedState, setSelectedState] = useState("FL");
@@ -135,11 +320,23 @@ export function TradePathApp({ initialTrades, initialStates, categories }: Props
   const [planSource, setPlanSource] = useState("");
   const [officialResults, setOfficialResults] = useState<OfficialResult[]>([]);
   const [officialSearchNote, setOfficialSearchNote] = useState("");
+  const [quizAnswers, setQuizAnswers] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState<"live" | "plan" | null>(null);
 
   const trade = initialTrades.find((item) => item.id === selectedTradeId) || initialTrades[0];
   const region = initialStates.find((item) => item.code === selectedState) || initialStates[0];
   const wage = livePayload?.wage || estimateWage(trade, region, selectedCity);
+  const categoryGuide = categoryGuides[trade.category] || defaultCategoryGuide;
+  const quizScore = Object.values(quizAnswers).reduce((total, score) => total + score, 0);
+  const maxQuizScore = categoryGuide.quiz.length * 2;
+  const quizResult =
+    Object.keys(quizAnswers).length < categoryGuide.quiz.length
+      ? "Answer the questions to see fit guidance."
+      : quizScore >= maxQuizScore - 1
+        ? "Strong fit signal. Next step: compare training options and talk to someone currently doing the work."
+        : quizScore >= Math.ceil(maxQuizScore / 2)
+          ? "Possible fit. Focus on shadowing, videos, and entry-level tasks before spending money."
+          : "Weak fit signal for this category. Try another category quiz before choosing a program.";
 
   const filteredTrades = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -191,6 +388,7 @@ export function TradePathApp({ initialTrades, initialStates, categories }: Props
     setSelectedTradeId(id);
     setLivePayload(null);
     setPlan("");
+    setQuizAnswers({});
   }
 
   function selectState(code: string) {
@@ -203,9 +401,9 @@ export function TradePathApp({ initialTrades, initialStates, categories }: Props
   const taskList = livePayload?.live.tasks?.length ? livePayload.live.tasks : trade.duties;
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-[1500px] p-4 text-[#17212b]">
+    <main className="mx-auto min-h-screen w-full max-w-[1500px] p-4 text-[#17212b] max-[640px]:p-2">
       <div className="grid min-h-[calc(100vh-2rem)] grid-cols-[340px_minmax(0,1fr)] border border-[#d8e0e7] bg-white shadow-[0_18px_45px_rgba(21,33,45,0.12)] max-[1120px]:grid-cols-1">
-        <aside className="flex flex-col gap-5 border-r border-[#d8e0e7] bg-[#fbfcfd] p-6 max-[1120px]:border-b max-[1120px]:border-r-0">
+        <aside className="flex flex-col gap-5 border-r border-[#d8e0e7] bg-[#fbfcfd] p-6 max-[1120px]:border-b max-[1120px]:border-r-0 max-[640px]:p-4">
           <div className="grid grid-cols-[52px_minmax(0,1fr)] items-center gap-3">
             <div className="grid h-13 w-13 place-items-center rounded-lg bg-[#17212b] font-bold text-white">TP</div>
             <div>
@@ -295,7 +493,7 @@ export function TradePathApp({ initialTrades, initialStates, categories }: Props
           </div>
         </aside>
 
-        <section className="grid gap-5 bg-gradient-to-b from-white to-[#f6f8fa] p-6">
+        <section className="grid gap-5 bg-gradient-to-b from-white to-[#f6f8fa] p-6 max-[640px]:p-4">
           <section className="grid grid-cols-[minmax(0,1fr)_auto] gap-5 border-b border-[#d8e0e7] pb-5 max-[760px]:grid-cols-1">
             <div>
               <p className="text-xs font-bold uppercase tracking-normal text-[#205b91]">
@@ -304,11 +502,11 @@ export function TradePathApp({ initialTrades, initialStates, categories }: Props
               <h2 className="mt-1 text-4xl font-bold leading-tight tracking-normal max-[760px]:text-3xl">{trade.title}</h2>
               <p className="mt-3 max-w-4xl leading-7 text-[#354656]">{livePayload?.live.description || trade.summary}</p>
             </div>
-            <div className="flex flex-wrap items-start justify-end gap-2">
-              <button className="min-h-11 rounded-md bg-[#237455] px-4 font-bold text-white disabled:opacity-70" disabled={loading === "live"} onClick={refreshLive} type="button">
+            <div className="flex flex-wrap items-start justify-end gap-2 max-[760px]:justify-stretch">
+              <button className="min-h-11 rounded-md bg-[#237455] px-4 font-bold text-white disabled:opacity-70 max-[760px]:flex-1" disabled={loading === "live"} onClick={refreshLive} type="button">
                 {loading === "live" ? "Refreshing" : "Refresh official data"}
               </button>
-              <button className="min-h-11 rounded-md border border-[#d8e0e7] bg-white px-4 font-bold disabled:opacity-70" disabled={loading === "plan"} onClick={buildPlan} type="button">
+              <button className="min-h-11 rounded-md border border-[#d8e0e7] bg-white px-4 font-bold disabled:opacity-70 max-[760px]:flex-1" disabled={loading === "plan"} onClick={buildPlan} type="button">
                 {loading === "plan" ? "Building" : "Build career plan"}
               </button>
             </div>
@@ -383,6 +581,94 @@ export function TradePathApp({ initialTrades, initialStates, categories }: Props
                 fallback={trade.nextSteps.map((item) => ({ title: item, text: `${selectedCity}, ${region.code}` }))}
                 type="school"
               />
+            </article>
+          </section>
+
+          <section className="grid grid-cols-[minmax(0,1.15fr)_minmax(300px,0.85fr)] gap-3 max-[980px]:grid-cols-1">
+            <article className="border border-[#d8e0e7] bg-white p-4">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                <h3 className="text-lg font-bold">Category Fit Quiz</h3>
+                <span className="text-sm text-[#5e6b78]">{trade.category}</span>
+              </div>
+              <div className="grid gap-4">
+                {categoryGuide.quiz.map((question) => (
+                  <fieldset className="grid gap-2 border border-[#d8e0e7] bg-[#f7f9fb] p-3" key={question.id}>
+                    <legend className="font-semibold">{question.question}</legend>
+                    <div className="grid gap-2">
+                      {question.options.map((option) => (
+                        <label className="flex min-h-11 items-center gap-3 rounded-md border border-[#d8e0e7] bg-white px-3 text-sm" key={option.label}>
+                          <input
+                            checked={quizAnswers[question.id] === option.score}
+                            name={question.id}
+                            onChange={() => setQuizAnswers((current) => ({ ...current, [question.id]: option.score }))}
+                            type="radio"
+                          />
+                          <span>{option.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                ))}
+              </div>
+              <div className="mt-4 border-l-4 border-[#237455] bg-[#f1fbf6] p-3">
+                <strong className="block">Quiz guidance</strong>
+                <span className="mt-1 block text-sm leading-6 text-[#314354]">{quizResult}</span>
+              </div>
+            </article>
+
+            <aside className="grid gap-3">
+              <section className="border border-[#d8e0e7] bg-white p-4">
+                <h3 className="mb-3 text-lg font-bold">Video References</h3>
+                <p className="mb-3 text-sm leading-6 text-[#5e6b78]">
+                  These links open YouTube searches instead of hand-picked claims. Prefer official schools, unions, employers, and workers showing ordinary day-to-day tasks.
+                </p>
+                <div className="grid gap-2">
+                  {[
+                    [`${trade.title} day in the life`, "Day-in-the-life videos"],
+                    [`${trade.title} apprenticeship training`, "Training and apprenticeship videos"],
+                    [`${trade.title} pros cons real work`, "Reality-check videos"],
+                  ].map(([search, label]) => (
+                    <a
+                      className="rounded-md border border-[#d8e0e7] bg-[#f7f9fb] px-3 py-2 text-sm font-semibold text-[#205b91]"
+                      href={youtubeSearchUrl(search)}
+                      key={search}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      {label}
+                    </a>
+                  ))}
+                </div>
+              </section>
+
+              <section className="border border-[#d8e0e7] bg-white p-4">
+                <h3 className="mb-3 text-lg font-bold">Fact Check Sources</h3>
+                <ul className="grid gap-2 text-sm leading-6 text-[#314354]">
+                  <li>BLS and CareerOneStop for wage and labor-market data.</li>
+                  <li>O*NET and CareerOneStop for job tasks and occupation details.</li>
+                  <li>State licensing boards for license rules, exams, and legal scope.</li>
+                  <li>Schools and apprenticeship sponsors for cost, length, placement, and completion requirements.</li>
+                </ul>
+              </section>
+            </aside>
+          </section>
+
+          <section className="grid grid-cols-2 gap-3 max-[900px]:grid-cols-1">
+            <article className="border border-[#d8e0e7] bg-white p-4">
+              <h3 className="mb-3 text-lg font-bold">What Actually Happens In The Field</h3>
+              <ul className="list-disc space-y-2 pl-5 leading-7 text-[#314354]">
+                {categoryGuide.reality.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </article>
+            <article className="border border-[#d8e0e7] bg-white p-4">
+              <h3 className="mb-3 text-lg font-bold">Path From Worker To Business Owner</h3>
+              <ol className="list-decimal space-y-2 pl-5 leading-7 text-[#314354]">
+                {categoryGuide.businessPath.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
             </article>
           </section>
 

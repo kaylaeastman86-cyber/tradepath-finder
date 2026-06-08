@@ -8,6 +8,9 @@ TradePath Finder is a production-ready Next.js site for exploring trade careers 
 - Filter by state and type any city.
 - Show wage ranges, job duties, training path, licenses, certifications, and schools/programs.
 - Clearly labels planning estimates vs. official CareerOneStop/BLS wage data.
+- Includes category fit quizzes to help visitors think through whether a trade path matches their working style.
+- Shows field-reality and worker-to-business-owner guidance so visitors see both the job path and the ownership path.
+- Provides YouTube search references for day-in-the-life, apprenticeship, and reality-check videos without pretending unverified videos are official facts.
 - Keeps CareerOneStop and Ollama credentials server-side.
 - Includes AdSense-ready trust pages, reserved ad placements, `robots.txt`, `sitemap.xml`, and `ads.txt`.
 
@@ -86,6 +89,14 @@ Before applying to AdSense:
 - O*NET OnLine: https://www.onetonline.org/
 - Google AdSense Program Policies: https://support.google.com/adsense/answer/48182
 - Google Publisher Policies: https://support.google.com/adsense/answer/10502938
+
+## Content Accuracy Rules
+
+- Treat CareerOneStop/BLS/O*NET/state licensing boards as the fact base.
+- Treat YouTube as a visual learning reference, not as the source of legal, wage, or licensing truth.
+- Keep planning estimates visibly labeled until official wage records are returned.
+- For school and apprenticeship pages, ask for program cost, length, completion rate, placement rate, exam pass rate, and whether the program satisfies local licensing rules.
+- For business ownership guidance, verify contractor licensing, insurance, bonding, taxes, permits, and advertising rules by state and city.
 
 ## Deployment
 
