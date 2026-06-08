@@ -236,7 +236,7 @@ function estimateWage(trade: Trade, region: StateOption, city: string): Wage {
   const median = Math.round((trade.nationalMedian * region.wageIndex * (major ? 1.08 : city ? 1.02 : 1)) / 100) * 100;
   return {
     source: "Planning estimate",
-    year: "Local estimate until official data is connected",
+    year: "Local planning estimate",
     area: city ? `${city}, ${region.code}` : region.name,
     low: Math.round((median * 0.76) / 100) * 100,
     median,
@@ -303,17 +303,63 @@ function DetailStack({
   );
 }
 
-function AdSlot({ label }: { label: string }) {
-  const client = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
-  return (
-    <aside className="border border-dashed border-[#c8d3dc] bg-white p-4 text-center text-xs text-[#5e6b78]" aria-label={label}>
-      {client ? "Advertisement" : "Ad placement reserved"}
-    </aside>
-  );
-}
-
 function youtubeSearchUrl(query: string) {
   return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+}
+
+function searchUrl(query: string) {
+  return `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+}
+
+function careerOneStopLicenseUrl(trade: Trade, region: StateOption) {
+  return `https://www.careeronestop.org/toolkit/training/find-licenses.aspx?keyword=${encodeURIComponent(trade.title)}&location=${encodeURIComponent(region.name)}`;
+}
+
+function careerOneStopTrainingUrl(trade: Trade, region: StateOption, city: string) {
+  return `https://www.careeronestop.org/Credentials/Toolkit/find-local-training.aspx?keyword=${encodeURIComponent(trade.title)}&location=${encodeURIComponent(`${city}, ${region.code}`)}`;
+}
+
+function jobImageUrl(trade: Trade) {
+  const query = encodeURIComponent(`${trade.title} trade worker`);
+  return `https://source.unsplash.com/900x620/?${query}`;
+}
+
+function LicenseActionLinks({ trade, region, city }: { trade: Trade; region: StateOption; city: string }) {
+  const location = city ? `${city}, ${region.name}` : region.name;
+  const links = [
+    {
+      label: "CareerOneStop License Finder",
+      description: "Search license records by occupation and state.",
+      href: careerOneStopLicenseUrl(trade, region),
+    },
+    {
+      label: "Local Training Finder",
+      description: "Find nearby schools, certificates, colleges, and WIOA-eligible programs.",
+      href: careerOneStopTrainingUrl(trade, region, city),
+    },
+    {
+      label: `${region.name} official licensing search`,
+      description: "Look for the state board, exam, application, renewal, and scope rules.",
+      href: searchUrl(`${region.name} ${trade.title} license application official site:.gov`),
+    },
+    {
+      label: `${location} permit or contractor office`,
+      description: "Check city or county permits, contractor registration, and business license steps.",
+      href: searchUrl(`${location} ${trade.title} contractor permit business license official site:.gov`),
+    },
+  ];
+
+  return (
+    <div className="mt-4 grid gap-2">
+      <h4 className="font-bold">Start Here</h4>
+      {links.map((link) => (
+        <a className="rounded-md border border-[#d8e0e7] bg-white p-3 text-sm" href={link.href} key={link.label} rel="noopener noreferrer" target="_blank">
+          <strong className="block text-[#205b91]">{link.label}</strong>
+          <span className="mt-1 block leading-6 text-[#5e6b78]">{link.description}</span>
+        </a>
+      ))}
+    </div>
+  );
 }
 
 export function TradePathApp({ initialTrades, initialStates, categories, sourceAudit }: Props) {
@@ -396,6 +442,9 @@ export function TradePathApp({ initialTrades, initialStates, categories, sourceA
     setLivePayload(null);
     setPlan("");
     setQuizAnswers({});
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
   }
 
   function selectState(code: string) {
@@ -487,20 +536,8 @@ export function TradePathApp({ initialTrades, initialStates, categories, sourceA
               </button>
             ))}
           </div>
-
-          <div className="mt-auto grid gap-2 border border-[#d8e0e7] bg-white p-4 text-sm">
-            <div className="flex justify-between gap-3">
-              <span className="text-[#5e6b78]">Official data</span>
-              <strong>{livePayload?.live.connected ? "Connected" : "Env needed"}</strong>
-            </div>
-            <div className="flex justify-between gap-3">
-              <span className="text-[#5e6b78]">AdSense</span>
-              <strong>Ready slots</strong>
-            </div>
-            <div className="flex justify-between gap-3">
-              <span className="text-[#5e6b78]">Weekly check</span>
-              <strong>{sourceAudit.status === "ok" ? "Clean" : "Review"}</strong>
-            </div>
+          <div className="mt-auto border border-[#d8e0e7] bg-white p-4 text-sm leading-6 text-[#5e6b78]">
+            Choose a trade, set your location, then use the license and training links to start with official sources.
           </div>
         </aside>
 
@@ -512,10 +549,16 @@ export function TradePathApp({ initialTrades, initialStates, categories, sourceA
               </p>
               <h2 className="mt-1 text-4xl font-bold leading-tight tracking-normal max-[760px]:text-3xl">{trade.title}</h2>
               <p className="mt-3 max-w-4xl leading-7 text-[#354656]">{livePayload?.live.description || trade.summary}</p>
+              <div
+                aria-label={`${trade.title} work image`}
+                className="mt-4 min-h-56 rounded-md bg-[#d8e0e7] bg-cover bg-center shadow-inner max-[640px]:min-h-44"
+                role="img"
+                style={{ backgroundImage: `linear-gradient(90deg, rgba(23,33,43,0.16), rgba(23,33,43,0.02)), url("${jobImageUrl(trade)}")` }}
+              />
             </div>
             <div className="flex flex-wrap items-start justify-end gap-2 max-[760px]:justify-stretch">
               <button className="min-h-11 rounded-md bg-[#237455] px-4 font-bold text-white disabled:opacity-70 max-[760px]:flex-1" disabled={loading === "live"} onClick={refreshLive} type="button">
-                {loading === "live" ? "Refreshing" : "Refresh official data"}
+                {loading === "live" ? "Refreshing" : "Refresh wage and training info"}
               </button>
               <button className="min-h-11 rounded-md border border-[#d8e0e7] bg-white px-4 font-bold disabled:opacity-70 max-[760px]:flex-1" disabled={loading === "plan"} onClick={buildPlan} type="button">
                 {loading === "plan" ? "Building" : "Build career plan"}
@@ -537,35 +580,6 @@ export function TradePathApp({ initialTrades, initialStates, categories, sourceA
             <div className="grid min-h-24 content-center gap-2 border border-[#d8e0e7] bg-white p-4">
               <span className="text-xs text-[#5e6b78]">Area</span>
               <strong className="text-lg">{wage.area}</strong>
-            </div>
-          </section>
-
-          <AdSlot label="Top ad placement" />
-
-          <section className="grid gap-3 border border-[#d8e0e7] bg-white p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h3 className="text-lg font-bold">Weekly Source Check</h3>
-                <p className="mt-1 text-sm text-[#5e6b78]">
-                  Last checked {sourceAudit.checkedAt.slice(0, 10)}. Scheduled for Sundays so salary and occupation sources do not quietly go stale.
-                </p>
-              </div>
-              <span className={`rounded-full px-3 py-1 text-sm font-bold ${sourceAudit.status === "ok" ? "bg-[#f1fbf6] text-[#237455]" : "bg-[#fff5e8] text-[#a56613]"}`}>
-                {sourceAudit.status}
-              </span>
-            </div>
-            <p className="leading-7 text-[#314354]">{sourceAudit.summary}</p>
-            <div className="grid grid-cols-3 gap-2 max-[900px]:grid-cols-1">
-              {sourceAudit.sources.length ? (
-                sourceAudit.sources.map((source) => (
-                  <a className="border border-[#d8e0e7] bg-[#f7f9fb] p-3 text-sm" href={source.url} key={source.id} rel="noopener noreferrer" target="_blank">
-                    <strong className="block">{source.name}</strong>
-                    <span className="mt-1 block text-[#5e6b78]">Status: {source.ok ? "reachable" : "needs review"} {source.status ? `(${source.status})` : ""}</span>
-                  </a>
-                ))
-              ) : (
-                <span className="text-sm text-[#5e6b78]">First scheduled source run pending.</span>
-              )}
             </div>
           </section>
 
@@ -603,6 +617,7 @@ export function TradePathApp({ initialTrades, initialStates, categories, sourceA
                 fallback={trade.credentials.map((item) => ({ title: item, text: `Verify the exact requirement with ${region.name}'s licensing board or local agency.` }))}
                 type="license"
               />
+              <LicenseActionLinks city={selectedCity} region={region} trade={trade} />
             </article>
             <article className="border border-[#d8e0e7] bg-white p-4">
               <h3 className="mb-3 text-lg font-bold">Certifications</h3>
@@ -747,6 +762,11 @@ export function TradePathApp({ initialTrades, initialStates, categories, sourceA
                   onClick={() => selectTrade(item.id)}
                   type="button"
                 >
+                  <span
+                    aria-hidden="true"
+                    className="block min-h-28 rounded bg-[#d8e0e7] bg-cover bg-center"
+                    style={{ backgroundImage: `url("${jobImageUrl(item)}")` }}
+                  />
                   <strong>{item.title}</strong>
                   <p className="text-sm leading-6 text-[#5e6b78]">{item.summary}</p>
                   <div className="mt-auto flex justify-between gap-3 text-xs text-[#5e6b78]">
@@ -759,7 +779,9 @@ export function TradePathApp({ initialTrades, initialStates, categories, sourceA
           </section>
 
           <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-[#d8e0e7] pt-4 text-sm text-[#5e6b78]">
-            <span>TradePath Finder uses official sources where connected and clearly labels planning estimates.</span>
+            <span>
+              Sources last checked {sourceAudit.checkedAt.slice(0, 10)}. TradePath Finder clearly labels planning estimates.
+            </span>
             <nav className="flex flex-wrap gap-4" aria-label="Site links">
               <Link className="font-semibold text-[#205b91]" href="/about">About</Link>
               <Link className="font-semibold text-[#205b91]" href="/methodology">Methodology</Link>
