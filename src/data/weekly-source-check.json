@@ -1,24 +1,24 @@
 {
-  "checkedAt": "2026-06-08T16:03:33.685Z",
+  "checkedAt": "2026-06-14T15:03:45.911Z",
   "schedule": "Sundays at 1:00 PM UTC via GitHub Actions, which is 9:00 AM Eastern during daylight time",
-  "status": "ok",
+  "status": "needs-review",
   "summary": "Weekly source check completed. BLS and O*NET release pages are tracked here; deeper salary parsing should use BLS OEWS downloadable data instead of AI-generated wages.",
-  "previousCheckedAt": "2026-06-08T16:02:57.668Z",
+  "previousCheckedAt": "2026-06-08T16:03:33.685Z",
   "sources": [
     {
       "id": "bls-oews-release",
       "name": "BLS OEWS release metadata",
       "url": "https://download.bls.gov/pub/time.series/oe/oe.release",
       "purpose": "Machine-readable OEWS release version check.",
-      "ok": true,
-      "status": 200,
+      "ok": false,
+      "status": 403,
       "finalUrl": "https://download.bls.gov/pub/time.series/oe/oe.release",
-      "lastModifiedHeader": "Fri, 15 May 2026 14:00:00 GMT",
-      "etag": "\"030991e73e4dc1:0\"",
+      "lastModifiedHeader": null,
+      "etag": null,
       "extracted": {
-        "latestReleaseCode": "2025A01",
-        "latestReleaseDescription": "May 2025",
-        "rows": 1,
+        "latestReleaseCode": "<html lang=\"en-us\">      ",
+        "latestReleaseDescription": null,
+        "rows": 28,
         "note": "OEWS release metadata is checked from BLS machine-readable text files."
       }
     },
@@ -27,48 +27,28 @@
       "name": "BLS OEWS occupation metadata",
       "url": "https://download.bls.gov/pub/time.series/oe/oe.occupation",
       "purpose": "Machine-readable occupation-code metadata used before wage parsing.",
-      "ok": true,
-      "status": 200,
+      "ok": false,
+      "status": 403,
       "finalUrl": "https://download.bls.gov/pub/time.series/oe/oe.occupation",
-      "lastModifiedHeader": "Fri, 15 May 2026 14:00:00 GMT",
-      "etag": "\"030991e73e4dc1:0\"",
+      "lastModifiedHeader": null,
+      "etag": null,
       "extracted": {
-        "rows": 1104,
+        "rows": 28,
         "sample": [
           {
-            "occupationCode": "000000",
-            "occupationText": "All Occupations",
-            "displayLevel": "",
-            "selectable": "0",
-            "sortSequence": "T"
+            "occupationCode": "<html lang=\"en-us\">      "
           },
           {
-            "occupationCode": "110000",
-            "occupationText": "Management Occupations",
-            "displayLevel": "",
-            "selectable": "0",
-            "sortSequence": "T"
+            "occupationCode": "               <head> "
           },
           {
-            "occupationCode": "111000",
-            "occupationText": "Top Executives",
-            "displayLevel": "",
-            "selectable": "1",
-            "sortSequence": "T"
+            "occupationCode": "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
           },
           {
-            "occupationCode": "111011",
-            "occupationText": "Chief Executives",
-            "displayLevel": "Determine and formulate policies and provide overall direction of companies or private and public sector organizations within guidelines set up by a board of directors or similar governing body. Plan, direct, or coordinate operational activities at the highest level of management with the help of subordinate executives and staff managers.",
-            "selectable": "3",
-            "sortSequence": "T"
+            "occupationCode": "<title>Access Denied</title>"
           },
           {
-            "occupationCode": "111021",
-            "occupationText": "General and Operations Managers",
-            "displayLevel": "Plan, direct, or coordinate the operations of public or private sector organizations, overseeing multiple departments or locations. Duties and responsibilities include formulating policies, managing daily operations, and planning the use of materials and human resources, but are too diverse and general in nature to be classified in any one functional area of management or administration, such as personnel, purchasing, or administrative services. Usually manage through subordinate supervisors. Excludes First-Line Supervisors.",
-            "selectable": "3",
-            "sortSequence": "T"
+            "occupationCode": "</head>"
           }
         ],
         "note": "Occupation metadata is reachable; wage parsing should map TradePath trades to these SOC-style occupation codes."
@@ -82,7 +62,7 @@
       "ok": true,
       "status": 200,
       "finalUrl": "https://www.onetcenter.org/database.html",
-      "lastModifiedHeader": "Mon, 08 Jun 2026 15:57:53 GMT",
+      "lastModifiedHeader": "Sun, 14 Jun 2026 15:03:46 GMT",
       "etag": null,
       "extracted": {
         "release": "O*NET 30.3 Database",
