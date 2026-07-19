@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-07-12T14:21:41.562Z",
+  "checkedAt": "2026-07-19T14:18:49.120Z",
   "schedule": "Sundays at 1:00 PM UTC via GitHub Actions, which is 9:00 AM Eastern during daylight time",
   "status": "needs-review",
   "summary": "Weekly source check completed. BLS and O*NET release pages are tracked here; deeper salary parsing should use BLS OEWS downloadable data instead of AI-generated wages.",
-  "previousCheckedAt": "2026-07-05T14:24:21.094Z",
+  "previousCheckedAt": "2026-07-12T14:21:41.562Z",
   "sources": [
     {
       "id": "bls-oews-release",
@@ -62,7 +62,7 @@
       "ok": true,
       "status": 200,
       "finalUrl": "https://www.onetcenter.org/database.html",
-      "lastModifiedHeader": "Sun, 12 Jul 2026 14:21:42 GMT",
+      "lastModifiedHeader": "Sun, 19 Jul 2026 14:18:49 GMT",
       "etag": null,
       "extracted": {
         "release": "O*NET 30.3 Database",
