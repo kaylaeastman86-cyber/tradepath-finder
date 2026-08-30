@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-08-23T13:23:53.079Z",
+  "checkedAt": "2026-08-30T17:02:02.919Z",
   "schedule": "Sundays at 1:00 PM UTC via GitHub Actions, which is 9:00 AM Eastern during daylight time",
   "status": "needs-review",
   "summary": "Weekly source check completed. BLS and O*NET release pages are tracked here; deeper salary parsing should use BLS OEWS downloadable data instead of AI-generated wages.",
-  "previousCheckedAt": "2026-08-16T13:22:45.318Z",
+  "previousCheckedAt": "2026-08-23T13:23:53.079Z",
   "sources": [
     {
       "id": "bls-oews-release",
@@ -62,12 +62,12 @@
       "ok": true,
       "status": 200,
       "finalUrl": "https://www.onetcenter.org/database.html",
-      "lastModifiedHeader": "Sun, 23 Aug 2026 13:23:53 GMT",
+      "lastModifiedHeader": "Sun, 30 Aug 2026 17:02:03 GMT",
       "etag": null,
       "extracted": {
-        "release": "O*NET 30.3 Database",
+        "release": "O*NET 31.0 Database",
         "updatedQuarterlyMentioned": true,
-        "highlights": "Highlights of the O*NET 30.3 Database</h2> <a name=\"update_by_occ\"></a> <p> The 30.3 release includes a variety of significant O*NET Program updates: </p> <ul> <li class=\"mb-3\">The <a href=\"/content.html\">O*NET Content Model</a> is modernized: <ul> <li>A straightforward, three-dimensional structure (Worker, Job, Market) reorganizes and consolidates information.</li> <li>Updated taxonomy structures showcase the availability of nested, granular dat",
+        "highlights": "Highlights of the O*NET 31.0 Database</h2> <a name=\"update_by_occ\"></a> <p> 208 occupations are updated in the 31.0 release of the O*NET database: </p> <ul> <li>Addition and update of <b>Abilities</b>, <b>Essential Skills</b>, and <b>Transferable Skills</b> data for 157 occupations</li> <li>Addition and update of <b>Task Statement ratings</b> (importance, relevance, and frequency) for 205 occupations</li> <li>Addition and update of <b>Emerging Ta",
         "note": "O*NET is the occupation detail source for tasks, skills, work context, education, and interests."
       }
     }
